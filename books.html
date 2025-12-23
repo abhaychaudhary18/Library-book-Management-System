@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Books - Library Book Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #020617;
+            color: #e5e7eb;
+            margin: 0;
+            padding: 24px;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        h1 {
+            margin-bottom: 8px;
+        }
+        a, button {
+            font-family: inherit;
+        }
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .search-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        input, select {
+            padding: 6px 8px;
+            border-radius: 8px;
+            border: 1px solid #4b5563;
+            background: #020617;
+            color: #e5e7eb;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 1px #38bdf8;
+        }
+        .btn-primary {
+            padding: 8px 12px;
+            border-radius: 9999px;
+            border: none;
+            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-secondary {
+            padding: 6px 10px;
+            border-radius: 9999px;
+            border: 1px solid #4b5563;
+            background: transparent;
+            color: #e5e7eb;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            background: #020617;
+        }
+        th, td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #1f2933;
+            font-size: 0.9rem;
+        }
+        th {
+            text-align: left;
+            background: #020617;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+        }
+        .badge-available {
+            background: rgba(22, 163, 74, 0.16);
+            border: 1px solid rgba(34, 197, 94, 0.65);
+        }
+        .badge-issued {
+            background: rgba(220, 38, 38, 0.18);
+            border: 1px solid rgba(248, 113, 113, 0.7);
+        }
+        .actions {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .small-input {
+            width: 120px;
+        }
+        .footer-note {
+            margin-top: 16px;
+            font-size: 0.78rem;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Library Books</h1>
+    <p style="margin-top:0;color:#9ca3af;font-size:0.9rem;">
+        Add, search, issue and return books. Availability updates in real time.
+    </p>
+
+    <div class="toolbar">
+        <form method="get" class="search-group">
+            <input type="text" name="q" placeholder="Search..."
+                   th:value="${query}">
+            <select name="filter">
+                <option value="bookId" th:selected="${filter} == 'bookId'">Book ID</option>
+                <option value="title" th:selected="${filter} == 'title'">Title</option>
+                <option value="author" th:selected="${filter} == 'author'">Author</option>
+                <option value="category" th:selected="${filter} == 'category'">Category</option>
+            </select>
+            <button class="btn-secondary" type="submit">Search</button>
+        </form>
+
+        <div>
+            <a href="/admin/books/new">
+                <button class="btn-primary" type="button">+ Add Book</button>
+            </a>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Book ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Issued To / Due Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td th:text="${book.bookId}" style="font-weight:600;color:#38bdf8;">CS001</td>
+            <td th:text="${book.title}">Title</td>
+            <td th:text="${book.author}">Author</td>
+            <td th:text="${book.category}">Category</td>
+            <td>
+                <span th:if="${book.available}" class="badge badge-available">Available</span>
+                <span th:if="${!book.available}" class="badge badge-issued">Issued</span>
+            </td>
+            <td>
+                <span th:if="${!book.available}">
+                    <span th:text="${book.issuedTo}">User</span>
+                    (<span th:text="${book.dueDate}">2025-01-01</span>)
+                </span>
+                <span th:if="${book.available}" style="color:#6b7280;">-</span>
+            </td>
+            <td class="actions">
+                <a th:href="@{'/admin/books/' + ${book.id} + '/edit'}">
+                    <button class="btn-secondary" type="button">Edit</button>
+                </a>
+
+                <form th:action="@{'/admin/books/' + ${book.id} + '/delete'}" method="post"
+                      onsubmit="return confirm('Delete this book?');">
+                    <button class="btn-secondary" type="submit">Delete</button>
+                </form>
+
+                <form th:if="${book.available}"
+                      th:action="@{'/admin/books/' + ${book.id} + '/issue'}" method="post" style="display:flex;gap:4px;">
+                    <input class="small-input" name="issuedTo" placeholder="Member name" required>
+                    <input class="small-input" name="dueDate" type="date">
+                    <button class="btn-secondary" type="submit">Issue</button>
+                </form>
+
+                <form th:if="${!book.available}"
+                      th:action="@{'/admin/books/' + ${book.id} + '/return'}" method="post">
+                    <button class="btn-secondary" type="submit">Return</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(books)}">
+            <td colspan="7" style="text-align:center;color:#6b7280;padding:16px;">
+                No books found. Try adding a new one.
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p class="footer-note">
+        Library Book Tracker System &mdash; demo implementation with H2 in-memory database.
+        Data resets on application restart.
+    </p>
+</div>
+</body>
+</html>
+
+

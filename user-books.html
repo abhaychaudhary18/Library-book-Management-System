@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Browse Books - User</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#020617;color:#e5e7eb;margin:0;padding:24px;}
+        .container{max-width:960px;margin:0 auto;}
+        table{width:100%;border-collapse:collapse;margin-top:12px;}
+        th,td{padding:8px 10px;border-bottom:1px solid #1f2933;font-size:0.9rem;}
+        th{text-align:left;}
+        .toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
+        .search-group{display:flex;gap:8px;flex-wrap:wrap;}
+        input,select{padding:6px 8px;border-radius:8px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;}
+        input:focus,select:focus{outline:none;border-color:#38bdf8;box-shadow:0 0 0 1px #38bdf8;}
+        .btn{padding:6px 10px;border-radius:9999px;border:1px solid #4b5563;background:transparent;color:#e5e7eb;cursor:pointer;font-size:0.85rem;}
+        .badge{display:inline-block;padding:2px 8px;border-radius:9999px;font-size:0.75rem;}
+        .badge-available{background:rgba(22,163,74,0.16);border:1px solid rgba(34,197,94,0.65);}
+        .badge-issued{background:rgba(220,38,38,0.18);border:1px solid rgba(248,113,113,0.7);}
+        a{color:#38bdf8;text-decoration:none;}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Browse Books</h1>
+    <p style="margin-top:0;color:#9ca3af;font-size:0.9rem;">
+        Search books by ID (in title or category), title, author or category. Only admins can issue/return.
+    </p>
+    <p><a href="/user/dashboard">&larr; Back to dashboard</a></p>
+
+    <div class="toolbar">
+        <form method="get" class="search-group">
+            <input type="text" name="q" placeholder="Search..."
+                   th:value="${query}">
+            <select name="filter">
+                <option value="bookId" th:selected="${filter} == 'bookId'">Book ID</option>
+                <option value="title" th:selected="${filter} == 'title'">Title</option>
+                <option value="author" th:selected="${filter} == 'author'">Author</option>
+                <option value="category" th:selected="${filter} == 'category'">Category</option>
+            </select>
+            <button class="btn" type="submit">Search</button>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Book ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Category</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td th:text="${book.bookId}" style="font-weight:600;color:#38bdf8;">CS001</td>
+            <td th:text="${book.title}">Title</td>
+            <td th:text="${book.author}">Author</td>
+            <td th:text="${book.category}">Category</td>
+            <td>
+                <span th:if="${book.available}" class="badge badge-available">Available</span>
+                <span th:if="${!book.available}" class="badge badge-issued">Issued</span>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(books)}">
+            <td colspan="5" style="text-align:center;color:#6b7280;padding:16px;">
+                No books found.
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
+
+
