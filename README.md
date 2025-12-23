@@ -1,30 +1,45 @@
-## Calculator Web App (Java + Maven + Spring Boot)
+📚 Library Book Management System – Web Application
 
-This module is a **web-based version** of your existing Maven calculator project.
-It exposes the same basic operations (add, subtract, multiply, divide) through a modern HTML UI.
+(Java + Maven + Spring Boot)
 
-### How to run
+This module is a web-based implementation of the Library Book Management System, built using Spring Boot and Maven.
+It provides a modern HTML-based interface to manage library operations such as adding books, viewing records, and handling user interactions through a browser.
 
-- **Step 1 – Go into the project**
+The application demonstrates how a traditional Maven-based Java project can be extended into a full-fledged web application using Spring Boot.
 
-```bash
-cd calculator-web-app
-```
+🚀 How to Run the Application
+Step 1 – Navigate to the Project Directory
+cd library-book-management-system
 
-- **Step 2 – Run with Maven**
-
-```bash
+Step 2 – Run the Application Using Maven
 mvn spring-boot:run
-```
 
-- **Step 3 – Open in browser**
+Step 3 – Open in Browser
 
-Open `http://localhost:8080` in your browser.
+Open the following URL in your browser:
 
-### Tech stack
+http://localhost:8080
 
-- **Language**: Java 17  
-- **Build tool**: Maven  
-- **Framework**: Spring Boot (Web + Thymeleaf)
+🛠️ Tech Stack
 
+Language: Java 17
 
+Build Tool: Maven
+
+Framework: Spring Boot
+
+Web Layer: Spring Boot Web
+
+Template Engine: Thymeleaf
+
+Server: Embedded Tomcat
+
+📌 Key Highlights
+
+Web-based library management system
+
+Clean MVC architecture
+
+Easy Maven-based execution
+
+Suitable for academic submission and portfolio projects
